@@ -2,8 +2,17 @@ from typing import Set
 
 
 class State:
-    """Search State (i.e. a node) of a `SearchProblem`"""
+    """Search State (i.e. a node) of a `SearchProblem`
+
+    When subclassing the state, also define __eq__ functions and __hash__ functions
+    """
     pass
+
+    def __eq__(self, other):
+        raise NotImplementedError()
+
+    def __hash__(self):
+        raise NotImplementedError()
 
 
 class Action:
