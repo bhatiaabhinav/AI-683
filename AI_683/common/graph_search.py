@@ -5,7 +5,7 @@ from typing import Collection, Callable
 class Node:
     """Node data structure used for graph-search"""
 
-    def __init__(self, state, cost, parent_node):
+    def __init__(self, state, cost, parent_node=None):
         self.cost = cost  # g-value of the node
         self.state = state  # the state of the problem contained in the node
         self.parent_node = parent_node
@@ -15,6 +15,21 @@ class Node:
 
     def __hash__(self):
         return hash(self.state)
+
+    def __str__(self):
+        return "(State: {0}, Cost: {1})".format(str(self.state), self.cost)
+
+    def __repr__(self):
+        return "(State: {0}, Cost: {1})".format(repr(self.state), self.cost)
+
+    def __lt__(self, other):
+        return True
+
+    def print_trace_to_parent(self):
+        parent = self
+        while parent is not None:
+            print(str(parent), end=' -> ')
+            parent = parent.parent_node
 
 
 def graph_search(problem: SearchProblem, frontier: Collection, frontier_add_fn: Callable[[Collection, Node], None], frontier_pop_fn: Callable[[Collection], Node]):
@@ -43,7 +58,7 @@ def graph_search(problem: SearchProblem, frontier: Collection, frontier_add_fn: 
         legal_actions = problem.operators(leaf_node.state)
         for a in legal_actions:
             ns = problem.successor_fn(s, a)
-            node = Node(ns, leaf_node.cost + problem.path_cost(s, a, ns), leaf_node)
+            node = Node(ns, leaf_node.cost + problem.path_cost(s, a, ns), parent_node=leaf_node)
             if node not in frontier and node not in explored_set:
                 frontier_add_fn(frontier, node)
 

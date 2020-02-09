@@ -4,7 +4,7 @@ from typing import Callable, Set
 import queue
 
 
-def astar(problem: SearchProblem, heuristic_fn: Callable[[State], float]):
+def astar(problem: SearchProblem, heuristic_fn: Callable[[State], float]) -> Node:
     frontier_set = set()
     frontier_pq = queue.PriorityQueue()
 
