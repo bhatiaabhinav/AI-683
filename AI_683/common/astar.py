@@ -1,25 +1,16 @@
 from AI_683.common.search_problem import SearchProblem, State
 from AI_683.common.graph_search import graph_search, Node
-from typing import Callable, Set
-import queue
+from typing import Callable, Tuple, List
 
 
-def astar(problem: SearchProblem, heuristic_fn: Callable[[State], float]) -> Node:
-    frontier_set = set()
-    frontier_pq = queue.PriorityQueue()
+def astar(problem: SearchProblem, heuristic_fn: Callable[[State], float]) -> Tuple[Node, List[Tuple[Node, float]]]:
+    """Runs astar with given heuristic
 
-    def frontier_add(frontier: Set, node: Node):
-        frontier.add(node)
-        h = heuristic_fn(node.state)
-        f = node.cost + h
-        setattr(node, "h", h)
-        setattr(node, "f", f)
-        frontier_pq.put((f, node))
+    Arguments:
+        problem {SearchProblem} -- [description]
+        heuristic_fn {Callable[[State], float]} -- takes in a State and returns an underestimate of optimal cost to the goal from that state
 
-    def frontier_pop(frontier: Set):
-        f, node = frontier_pq.get()
-        frontier.remove(node)
-        return node
-
-    soln_node = graph_search(problem, frontier_set, frontier_add, frontier_pop)
-    return soln_node
+    Returns:
+        Tuple[Node, List[Tuple[Node, float]]] -- goal_node, oredered list of (node, f-value of node) which were expanded
+    """
+    return graph_search(problem, lambda n: n.cost + heuristic_fn(n.state))

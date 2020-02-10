@@ -17,5 +17,5 @@ def test_prims_simple():
 	r = p.calculate_mst()	
 	print("MST Cost", r)
 
-test_prims_runs()
-test_prims_simple()
+# test_prims_runs()
+# test_prims_simple()

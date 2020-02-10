@@ -1,6 +1,7 @@
 import numpy
 import sys
 
+
 class Prims:
 	#N : number of vertices
 	#distance : 2D numpy array with euclidean distance between 2 nodes 
