@@ -25,6 +25,10 @@ class GridAction(Action, Enum):
     RIGHT = [1, 0]
     UP = [0, 1]
     DOWN = [0, -1]
+    UP_LEFT = [-1, 1]
+    UP_RIGHT = [1, 1]
+    DOWN_LEFT = [-1, -1]
+    DOWN_RIGHT = [1, -1]
 
 
 class GridProblem(SearchProblem):
@@ -36,10 +40,10 @@ class GridProblem(SearchProblem):
         return s == self.goal_state
 
     def operators(self, s: GridState):
-        return {GridAction.UP, GridAction.DOWN, GridAction.LEFT, GridAction.RIGHT}
+        return set([a for a in GridAction])
 
     def successor_fn(self, s: GridState, a: GridAction):
-        return GridState(s.point + a.value)
+        return GridState(s.point + np.array(a.value))
 
     def path_cost(self, s: GridState, a: GridAction, ns: GridState):
         return 1
