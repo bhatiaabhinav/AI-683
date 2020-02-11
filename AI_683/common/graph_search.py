@@ -130,6 +130,9 @@ def graph_search(problem: SearchProblem, exploration_order_fn: Callable[[Node], 
         # choose the node to explore from the frontier:
         f_value, node = frontier.pop()
 
+        # print("Expanding node: ", node)
+
+
         # add this state to set of explored states
         explored_states_set.add(node.state)
         explored_nodes_list.append((f_value, node))
@@ -153,4 +156,4 @@ def graph_search(problem: SearchProblem, exploration_order_fn: Callable[[Node], 
                     del frontier[child_state]
                     frontier.add(child_state, exploration_order_fn(child_node), child_node)
 
-    return None  # failure
+    return None, None  # failure

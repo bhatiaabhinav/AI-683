@@ -16,8 +16,8 @@ class Prims:
         self.mst_parents[0] = -1
         self.result = []
         self.cost = 0
-        print(self.grid_distances, "\n\n", self.mst_vertices,
-              "\n\n", self.mst_parents, "\n\n", self.mst_node_values)
+        # print(self.grid_distances, "\n\n", self.mst_vertices,
+        #       "\n\n", self.mst_parents, "\n\n", self.mst_node_values)
 
     def find_min_cutedge(self):
         min_cutedge = sys.maxsize
@@ -46,6 +46,6 @@ class Prims:
 
             # print("MST node values after: ",self.mst_node_values,"\n\n")
 
-        print("MST Parents: ", self.mst_parents)
+        #print("MST Parents: ", self.mst_parents)
 
         return self.cost
