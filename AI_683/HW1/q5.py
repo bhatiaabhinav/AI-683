@@ -2,6 +2,8 @@ from AI_683.common.search_problem import SearchProblem, State, Action
 from AI_683.common.astar import astar
 from enum import Enum
 import numpy as np
+import time
+import matplotlib.pyplot as plt
 
 
 class KnightState(State):
@@ -76,22 +78,49 @@ def knight_heuristic_taani(cur_point, goal_point):
     # return 0
 
 
-start_point = np.array([0, 0])
-goal_point = np.array([9, 9])
-problem = KnightProblem(start_point, goal_point)
-soln, trace = astar(problem, lambda state: knight_heuristic_taani(state.point, goal_point))
-# soln, trace = astar(problem, lambda state: knight_heuristic_naive(state.point, goal_point))
-soln.print_trace_to_parent()
-print(len(trace))
-print(trace)
+# start_point = np.array([0, 0])
+# goal_point = np.array([9, 9])
+# problem = KnightProblem(start_point, goal_point)
+# soln, trace = astar(problem, lambda state: knight_heuristic_taani(state.point, goal_point))
+# # soln, trace = astar(problem, lambda state: knight_heuristic_naive(state.point, goal_point))
+# soln.print_trace_to_parent()
+# print(len(trace))
+# print(trace)
 
 
 def scatter_plot_astar():
-    n_points = 1000
+    n_points = 200
+    maxmanhat = 70
     start_point = np.array([0, 0])
-    random_goals = np.random.randint(0, 100, size=(100, 2))
+    random_goals = np.random.randint(0, maxmanhat // 2, size=(n_points, 2))
     solution_lengths = []
     nodes_expanded = []
     computation_time = []
-    for g in random_goals:
-        pass
+    for i, goal_point in enumerate(random_goals):
+        print('Iter', i, ': Goal', goal_point, end='\t...\t')
+        problem = KnightProblem(start_point, goal_point)
+        start_time = time.time()
+        soln, trace = astar(problem, lambda state: knight_heuristic_naive(state.point, goal_point))
+        end_time = time.time()
+        t = end_time - start_time
+        computation_time.append(t * 1000)
+        solution_lengths.append(soln.cost)
+        nodes_expanded.append(len(trace))
+        print('Solved (cost={0}, expanded={1}, time_taken={2})'.format(soln.cost, len(trace), t))
+
+    plt.scatter(solution_lengths, nodes_expanded)
+    plt.title('Knights Problem: Nodes Expanded vs Solution Length')
+    plt.xlabel('Solution Length')
+    plt.ylabel('Nodes Expanded')
+    plt.show()
+
+    plt.clf()
+    plt.scatter(solution_lengths, computation_time)
+    plt.title('Knights Problem: Computation Time vs Solution Length')
+    plt.xlabel('Solution Length')
+    plt.ylabel('Computation Time (ms)')
+    plt.show()
+
+
+if __name__ == '__main__':
+    scatter_plot_astar()
