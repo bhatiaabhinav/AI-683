@@ -34,18 +34,18 @@ class PriorityDict:
         # TODO: change to DELETED_VALUE
         self.DELETED_VALUE = object()  # used to mark a key-value pair as deleted in O(1) time.
         self._ke_map = {}  # key to priorityqueue entry map of legit keys
-        self._ek_map = {}  # entry to key map of legit keys
+        self._ek_map = {}  # entry id to key map of legit keys
         self._pq = queue.PriorityQueue()  # the priority queue to hold entries in (priority, id, value) format
         self._counter = 0  # to assign a unique id to every value to break same priority ties. Causes FIFO behavior.
 
     def add(self, key, priority, value):
         '''Adds a new key-value pair with given priority'''
         assert key not in self._ke_map, "Key already present"
-        entry = (priority, self._counter, value)
+        entry = [priority, self._counter, value]
         self._counter += 1
         self._pq.put(entry)
         self._ke_map[key] = entry
-        self._ek_map[entry] = key
+        self._ek_map[entry[1]] = key
 
     def pop(self):
         '''retrieve lowest priority entry and remove it. Returns (priority, value) tuple'''
@@ -53,12 +53,12 @@ class PriorityDict:
             entry = self._pq.get()
             if entry[-1] == self.DELETED_VALUE:
                 # automatically popped. No housekeeping needed in other data structs.
-                assert entry not in self._ek_map, "A deleted entry found in hashmap"
+                assert entry[1] not in self._ek_map, "A deleted entry found in hashmap"
                 continue
             else:
-                key = self._ek_map[entry]
+                key = self._ek_map[entry[1]]
                 del self._ke_map[key]
-                del self._ek_map[entry]
+                del self._ek_map[entry[1]]
                 return entry[0], entry[-1]
         raise KeyError('The queue is empty')
 
@@ -83,7 +83,7 @@ class PriorityDict:
         if entry is not None:
             assert entry[-1] != self.DELETED_VALUE, "How did this happen. Item deleted but present in hashmap"
             del self._ke_map[key]
-            del self._ek_map[entry]
+            del self._ek_map[entry[1]]
             entry[-1] = self.DELETED_VALUE
 
     def __delitem__(self, key):
@@ -92,7 +92,7 @@ class PriorityDict:
         if entry is not None:
             assert entry[-1] != self.DELETED_VALUE, "How did this happen. Item deleted but present in hashmap"
             del self._ke_map[key]
-            del self._ek_map[entry]
+            del self._ek_map[entry[1]]
             entry[-1] = self.DELETED_VALUE
 
     def __contains__(self, key):

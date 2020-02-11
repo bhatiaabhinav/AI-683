@@ -41,7 +41,7 @@ class KnightProblem(SearchProblem):
         return s == self.goal_state
 
     def operators(self, s: KnightState):
-        return set([a for a in KnightAction])
+        return [a for a in KnightAction]
 
     def successor_fn(self, s: KnightState, a: KnightState):
         return KnightState(s.point + np.array(a.value))
@@ -50,9 +50,9 @@ class KnightProblem(SearchProblem):
         return 1
 
 
-def knight_heuristic(cur_point, goal_point):
+def knight_heuristic_naive(cur_point, goal_point):
     manhat = int(np.linalg.norm(cur_point - goal_point, ord=1))
-    min_steps_needed = manhat // 3
+    min_steps_needed = np.ceil(manhat / 3)
     # even manhat <-> same color and odd manhat <-> diff color
     # for knights Even moves <-> Same Color and Odd Moves <-> Diff Color
     if manhat % 2 == 1:
@@ -66,9 +66,32 @@ def knight_heuristic(cur_point, goal_point):
     return min_steps_needed
 
 
+def knight_heuristic_taani(cur_point, goal_point):
+    x, y = goal_point - cur_point
+    x, y = abs(x), abs(y)
+    x, y = int(x), int(y)
+    p = max(x, y)
+    q = min(x, y)
+    return 2 * min(p // 3, q // 3)
+    # return 0
+
+
 start_point = np.array([0, 0])
-goal_point = np.array([1, 1])
+goal_point = np.array([9, 9])
 problem = KnightProblem(start_point, goal_point)
-soln, trace = astar(problem, lambda state: knight_heuristic(state.point, goal_point))
+soln, trace = astar(problem, lambda state: knight_heuristic_taani(state.point, goal_point))
+# soln, trace = astar(problem, lambda state: knight_heuristic_naive(state.point, goal_point))
 soln.print_trace_to_parent()
+print(len(trace))
 print(trace)
+
+
+def scatter_plot_astar():
+    n_points = 1000
+    start_point = np.array([0, 0])
+    random_goals = np.random.randint(0, 100, size=(100, 2))
+    solution_lengths = []
+    nodes_expanded = []
+    computation_time = []
+    for g in random_goals:
+        pass
