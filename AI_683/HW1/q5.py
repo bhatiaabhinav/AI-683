@@ -89,8 +89,8 @@ def knight_heuristic_taani(cur_point, goal_point):
 
 
 def scatter_plot_astar():
-    n_points = 200
-    maxmanhat = 70
+    n_points = 500
+    maxmanhat = 100
     start_point = np.array([0, 0])
     random_goals = np.random.randint(0, maxmanhat // 2, size=(n_points, 2))
     solution_lengths = []
@@ -113,6 +113,7 @@ def scatter_plot_astar():
     plt.xlabel('Solution Length')
     plt.ylabel('Nodes Expanded')
     plt.show()
+    plt.savefig('figures/q5a.png')
 
     plt.clf()
     plt.scatter(solution_lengths, computation_time)
@@ -120,6 +121,7 @@ def scatter_plot_astar():
     plt.xlabel('Solution Length')
     plt.ylabel('Computation Time (ms)')
     plt.show()
+    plt.savefig('figures/q5b.png')
 
 
 if __name__ == '__main__':
