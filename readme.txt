@@ -7,7 +7,7 @@ Authors: Abhinav Bhatia (abhinavbhati@umass.edu) & Tanya Chowdhury (tanyachowdhu
 ## HW1
 
 To setup python virtual environment:
-From inside the AI-683 directory (i.e. the one in which this file is):
+From inside the AI-683 directory:
 
 ```
 python3 -m venv env
@@ -15,7 +15,7 @@ source env/bin/active
 pip install -r requirements.txt
 ```
 
-To run code for question 5, from AI-683 directory (i.e. the one in which this file is):
+To run code for question 5, from AI-683 directory:
 
 ```
 python -m AI_683.HW1.q5
