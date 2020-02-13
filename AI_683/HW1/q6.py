@@ -3,12 +3,10 @@ from AI_683.common.astar import astar
 from AI_683.HW1.Q6.Prims import Prims
 from AI_683.HW1.Q6.problem_generator import run_main
 
-from enum import Enum
 import numpy as np
 import time
 import matplotlib.pyplot as plt
 from typing import List
-import sys
 
 
 class TSPState(State):
@@ -16,7 +14,7 @@ class TSPState(State):
         self.city_list = city_list
 
     def __eq__(self, other):
-        return self.city_list==other.city_list
+        return self.city_list == other.city_list
 
     def __hash__(self):
         return hash(tuple(self.city_list))
@@ -39,13 +37,14 @@ class TSPProblem(SearchProblem):
         self.grid_distances = grid_distances
 
     def goal_test(self, s: TSPState):
-        if len(s.city_list) == (self.N+1):
-            assert np.sum(s.city_list[:self.N]) == (self.N)*(self.N-1)/2   , "City index sum not equal"
-            assert s.city_list[0]==s.city_list[-1] , "Fist last not equal"
+        if len(s.city_list) == (self.N + 1):
+            assert np.sum(s.city_list[:self.N]) == (
+                self.N) * (self.N - 1) / 2, "City index sum not equal"
+            assert s.city_list[0] == s.city_list[-1], "Fist last not equal"
             return True
 
     def operators(self, s: TSPState):
-        if(len(s.city_list)==self.N):
+        if(len(s.city_list) == self.N):
             return [0]
         else:
             return list(set(list(range(self.N))) - set(s.city_list))
@@ -68,62 +67,67 @@ class TSPProblem(SearchProblem):
 
 
 def scatter_plot_astar():
-    n_cities = list(range(2,20))*10
+    n_cities = list(range(2, 20)) * 10
     nodes_expanded = []
     computation_time = []
 
     for n in n_cities:
-        print('\n\n\nCities: ',n)
-        grid_distances,N = run_main(n,0.0001)
-        problem = TSPProblem(N,grid_distances)
+        print('\n\n\nCities: ', n)
+        grid_distances, N = run_main(n, 0.0001)
+        problem = TSPProblem(N, grid_distances)
         start_time = time.time()
-        soln, trace = astar(problem, lambda s: heuristic(s,N,grid_distances))
+        soln, trace = astar(problem, lambda s: heuristic(s, N, grid_distances))
         end_time = time.time()
         t = end_time - start_time
         computation_time.append(t * 1000)
         nodes_expanded.append(len(trace))
-        print('Solved (cost={0}, expanded={1}, time_taken={2})'.format(soln.cost, len(trace), t))
+        print('Solved (cost={0}, expanded={1}, time_taken={2})'.format(
+            soln.cost, len(trace), t))
 
     plt.scatter(n_cities, nodes_expanded)
     plt.title('TSP Problem: Nodes Expanded vs Number of Cities')
     plt.xlabel('Number of cities')
     plt.ylabel('Nodes Expanded')
-    plt.show()
+    # plt.show()
+    plt.savefig('figures/q6a.png')
 
     plt.clf()
     plt.scatter(n_cities, computation_time)
     plt.title('TSP Problem: Computation Time vs Number of cities')
     plt.xlabel('Number of Cities')
     plt.ylabel('Computation Time (ms)')
-    plt.show()
+    # plt.show()
+    plt.savefig('figures/q6b.png')
 
 
 if __name__ == '__main__':
-    
+
     # grid_distances = np.array([[0, 2, sys.maxsize, 6, sys.maxsize], [2, 0, 3, 8, 5], [
     #                           sys.maxsize, 3, 0, sys.maxsize, 7], [6, 8, sys.maxsize, 0, 9], [sys.maxsize, 5, 7, 9, 0]], np.float32)
     # N=5
     # grid_distances,N = run_main(20,0.001)
 
     # problem = TSPProblem(N,grid_distances)
-    
+
     def heuristic(s: TSPState, N, grid_distances):
-        explored_nodes = len(s.city_list)
+        # explored_nodes = len(s.city_list)
         unexplored_grid_distances = grid_distances
         mst_cities = np.array(list(range(N)))
         mst_del_cities = []
-    
 
         # print("mst cities: \n",mst_cities)
 
-        if len(s.city_list)> 2:
+        if len(s.city_list) > 2:
             mst_del_cities = np.array(list(set(s.city_list[1:-1])))
-            unexplored_grid_distances = np.delete(unexplored_grid_distances,mst_del_cities,0) 
-            unexplored_grid_distances = np.delete(unexplored_grid_distances,mst_del_cities,1) 
-            mst_cities =  np.array(list(  set(list(range(N))) - set(mst_del_cities) ))
-        
+            unexplored_grid_distances = np.delete(
+                unexplored_grid_distances, mst_del_cities, 0)
+            unexplored_grid_distances = np.delete(
+                unexplored_grid_distances, mst_del_cities, 1)
+            mst_cities = np.array(
+                list(set(list(range(N))) - set(mst_del_cities)))
+
         # print("mst del cities \n",mst_del_cities)
-        #print("mst cities: \n",mst_cities)
+        # print("mst cities: \n",mst_cities)
         # print("tree state: \n",s.city_list)
         # print("mst distances: \n",unexplored_grid_distances)
 
@@ -132,7 +136,7 @@ if __name__ == '__main__':
         r = p.calculate_mst()
         return r
 
-    #0 heuristic
+    # 0 heuristic
     # sol, trace = astar(problem, lambda s: 0)
     # print("0 heuristic: ",len(trace))
 

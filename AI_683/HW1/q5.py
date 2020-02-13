@@ -112,7 +112,7 @@ def scatter_plot_astar():
     plt.title('Knights Problem: Nodes Expanded vs Solution Length')
     plt.xlabel('Solution Length')
     plt.ylabel('Nodes Expanded')
-    plt.show()
+    # plt.show()
     plt.savefig('figures/q5a.png')
 
     plt.clf()
@@ -120,7 +120,7 @@ def scatter_plot_astar():
     plt.title('Knights Problem: Computation Time vs Solution Length')
     plt.xlabel('Solution Length')
     plt.ylabel('Computation Time (ms)')
-    plt.show()
+    # plt.show()
     plt.savefig('figures/q5b.png')
 
 
