@@ -11,9 +11,9 @@ def all_assigned(puzzle):
 	for i in range(9):
 		for j in range(9):
 			if(puzzle[i][j]=='-'):
-				return False
-	return True
-	
+				return False, (i,j)
+	return True, (9,9)
+
 def row_constraints(puzzle):
 	for i in range(len(puzzle)):
 		if ( alldiff_contraint(puzzle[i]) == False) : 
