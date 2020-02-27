@@ -18,10 +18,10 @@ def get_domain_values(puzzle):
 			if (puzzle[i][j]!='-') :
 				domain[i][j] = set(puzzle[i][j])
 			else:
-				domain[i][j] = set([str(k+1) for k in range(9) ])
+				domain[i][j] = set( [str(k+1) for k in range(9) ])
 	return domain
 
-def all_assigned(puzzle):
+def all_assigned(puzzle,domain):
 	for i in range(9):
 		for j in range(9):
 			if(puzzle[i][j]=='-'):
