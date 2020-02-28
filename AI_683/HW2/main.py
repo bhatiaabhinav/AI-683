@@ -1,14 +1,65 @@
 from utils import read_puzzle, write_solution, get_domain_values, all_assigned,mrv_assigned
 from constraints import global_constraints_check
 import copy
+import queue 
+
+def get_all_constraints():
+	arcs = queue.Queue()
+	for i in range(9):
+		for n1 in range(9):
+			for n2 in range(9):
+				if n1!=n2:
+					arcs.put((i,n1,i,n2))
+					arcs.put((n1,i,n2,i))
+
+	for i in range(3):
+		for j in range(3):
+			for n1 in range(3):
+				for n2 in range(3):
+					arcs.put(3*i+n1,3*j+n2)
+
+	return arcs 
+
+def add_neighbor_constraints(arcs,X_i,X_j):
+	for i in range(9):
+		arcs.put((X_i[0],X_i[1],X_i[0],i))
+		arcs.put((X_i[0],X_i[1],i,X_i[1]))
+	
+	for i in range(3):
+		for j in range(3):
+			arcs.put((X_i[0],X_i[1],3*(X_i[0]//3)+i,3*(X_i[1]//3)+j))
+
+def revise_domains(domain,X_i,X_j):
+	revised = False
+	D_i = domain[X_i[0]][X_i[1]]
+	D_j = domain[X_j[0]][X_j[1]]
+	if len(D_j)==1:
+		for key in D_j:
+			if key in D_i:
+				domain[X_i[0]][X_i[1]].remove(key)
+				revised = True
+
+	return revised, domain
+
+def AC3(puzzle,s_domain):
+	domain = copy.deepcopy(s_domain)
+	arcs = queue.Queue(get_all_constraints())
+	while(arcs.empty()!=True):
+		diff_constraint = arcs.get()
+		X_i = (diff_constraint[0],diff_constraint[1])
+		X_j = (diff_constraint[2],diff_constraint[3])
+		is_domain_revised, domain = revise_domains(domain,X_i,X_j)
+
+		if (is_domain_revised == True):
+			if(domain[X_i[0]][X_i[1]] is None):
+				return False
+			arcs = add_neighbor_constraints(arcs,X_i,X_j)
+	return True, domain
+
 
 def forward_checking(puzzle,s_domain, x,y ):
 	assigned_val =  puzzle[x][y]
 	domain = copy.deepcopy(s_domain)
-#	print("PUZZLE:\n\n",puzzle)
-#	print("X,Y \n\n",x,y)
-#	print("Assigned Val\n\n",assigned_val)
-#	print("Domain:\n\n",domain)
 
 	domain[x][y]=set(assigned_val)
 
@@ -17,8 +68,6 @@ def forward_checking(puzzle,s_domain, x,y ):
 			domain[x][i].remove(assigned_val)
 		if (i!=x) and (assigned_val in domain[i][y]):
 			domain[i][y].remove(assigned_val)
-
-		#print("Here: ",domain[x][i], len(domain[x][i]))
 
 		if ( (domain[x][i] is None) or (domain[i][y] is None) ):
 			return False, domain
@@ -30,12 +79,10 @@ def forward_checking(puzzle,s_domain, x,y ):
 			if domain[3*(x//3)+i][3*(y//3)+j] is None:
 				return False,domain
 
-#	print("New Domain:\n\n",domain)
 	return True, domain
 
 def backtracking(puzzle,domain, num_guesses):
 	assigned, (x,y) = mrv_assigned(puzzle,domain)
-#	print (puzzle, (x,y))
 
 	if(assigned == True):
 		return True, puzzle, num_guesses
@@ -47,8 +94,9 @@ def backtracking(puzzle,domain, num_guesses):
 		puzzle[x][y]= element
 
 		is_domain_valid, pruned_domain = forward_checking(puzzle,domain,x,y)
+		is_ac3_valid, pruned_domain = AC3(puzzle,pruned_domain)
 
-		if( (global_constraints_check(puzzle) == True) and (is_domain_valid==True) ):
+		if( (global_constraints_check(puzzle) == True) and (is_domain_valid==True) and (is_ac3_valid==True)):
 			solve, puzzle, num_guesses = backtracking(puzzle,pruned_domain, num_guesses)
 	
 			if solve==True:
@@ -56,11 +104,10 @@ def backtracking(puzzle,domain, num_guesses):
 	
 		puzzle[x][y]='-'
 
-#	print(domain)
 	return False, puzzle, num_guesses
 
 
-puzzle_name = '051.txt'
+puzzle_name = '100.txt'
 puzzle = read_puzzle(puzzle_name)
 print("\n\nPuzzle: ")
 print(puzzle)
