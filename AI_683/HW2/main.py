@@ -1,33 +1,7 @@
 from utils import read_puzzle, write_solution, get_domain_values, all_assigned,mrv_assigned
-from constraints import global_constraints_check
+from constraints import global_constraints_check,get_all_constraints, add_neighbor_constraints
 import copy
 import queue 
-
-def get_all_constraints():
-	arcs = queue.Queue()
-	for i in range(9):
-		for n1 in range(9):
-			for n2 in range(9):
-				if n1!=n2:
-					arcs.put((i,n1,i,n2))
-					arcs.put((n1,i,n2,i))
-
-	for i in range(3):
-		for j in range(3):
-			for n1 in range(3):
-				for n2 in range(3):
-					arcs.put(3*i+n1,3*j+n2)
-
-	return arcs 
-
-def add_neighbor_constraints(arcs,X_i,X_j):
-	for i in range(9):
-		arcs.put((X_i[0],X_i[1],X_i[0],i))
-		arcs.put((X_i[0],X_i[1],i,X_i[1]))
-	
-	for i in range(3):
-		for j in range(3):
-			arcs.put((X_i[0],X_i[1],3*(X_i[0]//3)+i,3*(X_i[1]//3)+j))
 
 def revise_domains(domain,X_i,X_j):
 	revised = False
