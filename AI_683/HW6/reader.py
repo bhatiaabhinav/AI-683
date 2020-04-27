@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import linalg as LA
+import copy
 def remove_endl(s):
 	for itr in range(len(s)):
 		s[itr] = s[itr][:-1] if s[itr].endswith('\n') else s[itr]
@@ -31,31 +32,19 @@ def preprocess_lines(s):
 
 	return N,R,transition_func
 
-def transform_action(N,action):
-	char_action = []
-	for i in range(N):
-		if(action[i]==0):
-			char_action.append('left')
-		elif(action[i]==1):
-			char_action.append('right')
-		elif(action[i]==2):
-			char_action.append('up')
-		elif(action[i]==3):
-			char_action.append('down')
-
-	return char_action	
-
 def value_iteration(N,R,transition_func):
-	_U = np.empty((N),dtype=np.float32)
+	_U = np.zeros((N),dtype=np.float32)
 	_action = np.zeros((N),dtype=np.int32)
 	
-	U = _U
-	action = _action
-	delta = 1
+	U = np.zeros((N),dtype=np.float32)
+	action = np.zeros((N),dtype=np.int32)
 
-	while(delta>0.001):
-		U = _U
-		action = _action
+	delta = 1
+	itr = 0
+
+	while(delta>0):
+		U = copy.deepcopy(_U)
+		action = copy.deepcopy(_action)
 		delta = 0
 
 		for i in range(N):
@@ -71,25 +60,38 @@ def value_iteration(N,R,transition_func):
 				down_utility+=transition_func['down'][i,k]*U[k]
 
 			max_neighbor_utility = max(left_utility,right_utility,up_utility,down_utility)
+			#print('max_neighbor_utility',max_neighbor_utility)
 
 			_U[i] = R[i] + max_neighbor_utility
+			print(U,_U)
 
 			if(max_neighbor_utility == left_utility):
 				_action[i] = 0
 			elif(max_neighbor_utility == right_utility):
-				_action[i] = 1
-			elif(max_neighbor_utility == up_utility):
 				_action[i] = 2
+			elif(max_neighbor_utility == up_utility):
+				_action[i] = 1
 			elif(max_neighbor_utility == down_utility):
 				_action[i] = 3
 
 			delta = LA.norm(U-_U)
+			itr += 1
+			#print(itr,delta)
 
+	return U,action
 
-	return U,transform_action(N,action)
-
-fname = open("gw2.txt","r")
+fname = open("gw1.txt","r")
 lines = fname.readlines()
 N,R,transition_func = preprocess_lines(lines)
 U,action = value_iteration(N,R,transition_func)
-print(U,action)
+
+U = U[:-1]
+action = action[:-1]
+U = np.reshape(U,(4,6))
+action = np.reshape(action,(4,6))
+
+print('Utility table:')
+print(U)
+
+print('Action:')
+print(action)
