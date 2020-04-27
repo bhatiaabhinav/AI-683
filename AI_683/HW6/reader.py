@@ -63,7 +63,6 @@ def value_iteration(N,R,transition_func):
 			#print('max_neighbor_utility',max_neighbor_utility)
 
 			_U[i] = R[i] + max_neighbor_utility
-			print(U,_U)
 
 			if(max_neighbor_utility == left_utility):
 				_action[i] = 0
@@ -74,9 +73,9 @@ def value_iteration(N,R,transition_func):
 			elif(max_neighbor_utility == down_utility):
 				_action[i] = 3
 
-			delta = LA.norm(U-_U)
-			itr += 1
-			#print(itr,delta)
+		delta = LA.norm(U-_U)
+		itr += 1
+		print(itr,delta)
 
 	return U,action
 
