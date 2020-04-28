@@ -1,0 +1,14 @@
+Solution found in 7 steps!
+1. Move D1 D2 C
+
+2. Move D2 D3 B
+
+3. Move D1 C D2
+
+4. Move D3 A C
+
+5. Move D1 D2 A
+
+6. Move D2 B D3
+
+7. Move D1 A D2
